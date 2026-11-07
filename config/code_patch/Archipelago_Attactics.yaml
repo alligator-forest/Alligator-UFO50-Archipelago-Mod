@@ -1,0 +1,121 @@
+gml_GlobalScript_scr02_SaveGame:
+  - type: findprepend
+    find: |-
+      scrWriteReal("highScore", highScore);
+    code: |-
+      scrWriteReal("levelsWon", levelsWon);
+  - type: findappend
+    find: |-
+      campaignLosses = scrReadReal("campaignLosses", 0);
+    code: |-
+      levelsWon = scrReadReal("levelsWon", 0);
+gml_Object_o02_Game_Other_13:
+  - type: findprepend
+    find: |-
+      scr02_CreateUnit(unitType, LEFT_EDGE, TOP_EDGE + (32 * redRow));
+    code: |-
+      if(has_item(unitType) || unitType == RED_GRUNTS)
+gml_GlobalScript_scr02_DeathCheck:
+  - type: findreplace
+    find: |-
+      if (hp > 0 && !promoted)
+    code: |-
+      if (hp > 0 && !promoted && (get_item_count(type) > 1 || (type == RED_GRUNTS && has_item(RED_GRUNTS))))
+gml_Object_o02_Game_Draw_0:
+  - type: findreplace
+    find: |-
+      if (lvl < TOTAL_LEVELS && canAdvance)
+    code: |-
+      if (lvl < TOTAL_LEVELS)
+  - type: findprepend
+    find: |-
+      draw_set_color(global.palette[26]);
+    code:
+      if(levelsComplete[lvl])
+        draw_set_color(global.palette[2]);
+      else
+  - type: findreplacetrim
+    find: |-
+      scrStringDraw(112, 112 + _yshift, "ranked_mode");
+      scrStringDraw(112, 128 + _yshift, "survival_mode");
+      scrStringDraw(112, 80 + _yshift, "instructions");
+    code:
+      scrStringDraw(112, 80 + _yshift, "instructions");
+      if(!has_item(8))
+        draw_set_color(global.palette[16])
+      scrStringDraw(112, 112 + _yshift, "ranked_mode");
+      draw_set_color(c_white)
+      if(!has_item(9))
+        draw_set_color(global.palette[16])
+      scrStringDraw(112, 128 + _yshift, "survival_mode");
+  - type: findreplace
+    find: |-
+      scrStringDrawVal(232, 96 + _yshift, "level_x", min(SINGLE_PLAYER_LEVELS, highestLevel));
+    code: |-
+      scrStringDrawVal(232, 96 + _yshift, "level_x", min(SINGLE_PLAYER_LEVELS, levelsWon));
+gml_Object_o02_Game_Other_11:
+  - type: findremovetrim
+    find: |-
+      canAdvance = true;
+
+      if (players == 1 && !levelsComplete[lvl])
+          canAdvance = false;
+  - type: findreplace
+    find: |-
+      if (pressRight && selY[RED] == 0 && canAdvance)
+    code: |-
+      if (pressRight && selY[RED] == 0)
+gml_Object_o02_Game_Other_10:
+  - type: findreplace
+    find: |-
+      else if (menuY == 2)
+    code: |-
+      else if (menuY == 2 && has_item(8))
+  - type: findreplace
+    find: |-
+      else if (menuY == 3)
+    code: |-
+      else if (menuY == 3 && has_item(9))
+  - type: findappendtrim
+    find: |-
+      {
+          lvl = SINGLE_PLAYER_LEVELS + 2;
+          mode = MODE_ENDLESS;
+          scrSwitchState(STATE_LEVEL_GEN);
+      }
+    code: |-
+      else
+        scrSwitchState(0);
+gml_Object_o02_Game_Other_14:
+  - type: findprepend
+    find: |-
+      levelsComplete[lvl] = true;
+    code: |-
+      levelsWon++;
+      collect_location(lvl);
+  - type: findreplacetrim
+    find: |-
+      if (lvl == GARDEN_GOAL)
+        scrWin(global.GARDEN_WIN);
+    code: |-
+      if (levelsWon == GARDEN_GOAL)
+      {
+        collect_location(997);
+        scrWin(global.GARDEN_WIN);
+      }
+  - type: findreplacetrim
+    find: |-
+      if (lvl > TOTAL_LEVELS)
+      {
+    code: |-
+      if (levelsWon == TOTAL_LEVELS)
+      {
+        collect_location(998);
+  - type: findreplace
+    find: |-
+      scrWin(2);
+    code: |-
+      {
+        collect_location(999);
+        scrWin(2);
+      }
