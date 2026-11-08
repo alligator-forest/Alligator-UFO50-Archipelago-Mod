@@ -9,12 +9,6 @@ gml_GlobalScript_scr02_SaveGame:
       campaignLosses = scrReadReal("campaignLosses", 0);
     code: |-
       levelsWon = scrReadReal("levelsWon", 0);
-gml_Object_o02_Game_Other_13:
-  - type: findprepend
-    find: |-
-      scr02_CreateUnit(unitType, LEFT_EDGE, TOP_EDGE + (32 * redRow));
-    code: |-
-      if(has_item(unitType) || unitType == RED_GRUNTS)
 gml_GlobalScript_scr02_DeathCheck:
   - type: findreplace
     find: |-
@@ -53,18 +47,6 @@ gml_Object_o02_Game_Draw_0:
       scrStringDrawVal(232, 96 + _yshift, "level_x", min(SINGLE_PLAYER_LEVELS, highestLevel));
     code: |-
       scrStringDrawVal(232, 96 + _yshift, "level_x", min(SINGLE_PLAYER_LEVELS, levelsWon));
-gml_Object_o02_Game_Other_11:
-  - type: findremovetrim
-    find: |-
-      canAdvance = true;
-
-      if (players == 1 && !levelsComplete[lvl])
-          canAdvance = false;
-  - type: findreplace
-    find: |-
-      if (pressRight && selY[RED] == 0 && canAdvance)
-    code: |-
-      if (pressRight && selY[RED] == 0)
 gml_Object_o02_Game_Other_10:
   - type: findreplace
     find: |-
@@ -86,6 +68,24 @@ gml_Object_o02_Game_Other_10:
     code: |-
       else
         scrSwitchState(0);
+gml_Object_o02_Game_Other_11:
+  - type: findremovetrim
+    find: |-
+      canAdvance = true;
+
+      if (players == 1 && !levelsComplete[lvl])
+          canAdvance = false;
+  - type: findreplace
+    find: |-
+      if (pressRight && selY[RED] == 0 && canAdvance)
+    code: |-
+      if (pressRight && selY[RED] == 0)
+gml_Object_o02_Game_Other_13:
+  - type: findprepend
+    find: |-
+      scr02_CreateUnit(unitType, LEFT_EDGE, TOP_EDGE + (32 * redRow));
+    code: |-
+      if(has_item(unitType) || unitType == RED_GRUNTS)
 gml_Object_o02_Game_Other_14:
   - type: findprepend
     find: |-
@@ -118,4 +118,23 @@ gml_Object_o02_Game_Other_14:
       {
         collect_location(999);
         scrWin(2);
+      }
+  - type: findappend
+    find: |-
+      rankDelta = 2;
+    code: |-
+      rankDelta += 5 * get_item_count(12)
+  - type: findreplace
+    find: |-
+      highestRank = rank + rankDelta;
+    code: |-
+      {
+      highestRank = rank + rankDelta;
+      rank_loc = floor(highestRank / 10.0) + 29
+      if(!is_location_collected(rank_loc))
+        collect_location(rank_loc)
+        for(var i = rank_loc - 1; i > 30 && !is_location_collected(i); i--)
+        {
+          collect_location(i);
+        }
       }
