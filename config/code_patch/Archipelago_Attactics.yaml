@@ -86,6 +86,12 @@ gml_Object_o02_Game_Other_13:
       scr02_CreateUnit(unitType, LEFT_EDGE, TOP_EDGE + (32 * redRow));
     code: |-
       if(has_item(unitType) || unitType == RED_GRUNTS)
+  - type: findprepend
+    find:
+      genPercent += 1;
+    code:
+      if(turnCounter % 25 == 0 && turnCounter < 151 && !is_location_collected(turnCounter / 25 + 49))
+        collect_location(turnCounter / 25 + 49);
 gml_Object_o02_Game_Other_14:
   - type: findprepend
     find: |-
