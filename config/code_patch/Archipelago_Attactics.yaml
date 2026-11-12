@@ -80,6 +80,18 @@ gml_Object_o02_Game_Other_11:
       if (pressRight && selY[RED] == 0 && canAdvance)
     code: |-
       if (pressRight && selY[RED] == 0)
+gml_Object_o02_Game_Other_12:
+  - type: findreplace
+    find:
+      castleRedHP = levels[lvl][RED_HP];
+    code:
+      castleRedHP = levels[lvl][RED_HP] + get_item_count(10);
+      flagStep = 128.0 / (max(5, castleRedHP) - 1);
+  - type: findreplace
+    find:
+      flag = instance_create(22, 160 - (32 * i), o02_Flag);
+    code:
+      flag = instance_create(22, 160 - floor(flagStep * i), o02_Flag);
 gml_Object_o02_Game_Other_13:
   - type: findprepend
     find: |-
