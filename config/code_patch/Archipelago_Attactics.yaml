@@ -82,28 +82,75 @@ gml_Object_o02_Game_Other_11:
       if (pressRight && selY[RED] == 0)
 gml_Object_o02_Game_Other_12:
   - type: findreplace
-    find:
+    find: |-
       castleRedHP = levels[lvl][RED_HP];
-    code:
+    code: |-
       castleRedHP = levels[lvl][RED_HP] + get_item_count(10);
       flagStep = 128.0 / (max(5, castleRedHP) - 1);
   - type: findreplace
-    find:
+    find: |-
       flag = instance_create(22, 160 - (32 * i), o02_Flag);
-    code:
+    code: |-
       flag = instance_create(22, 160 - floor(flagStep * i), o02_Flag);
 gml_Object_o02_Game_Other_13:
   - type: findprepend
     find: |-
-      scr02_CreateUnit(unitType, LEFT_EDGE, TOP_EDGE + (32 * redRow));
-    code: |-
-      if(has_item(unitType) || unitType == RED_GRUNTS)
-  - type: findprepend
-    find:
       genPercent += 1;
-    code:
+    code: |-
       if(turnCounter % 25 == 0 && turnCounter < 151 && !is_location_collected(turnCounter / 25 + 49))
         collect_location(turnCounter / 25 + 49);
+  - type: findappend
+    find: |-
+      var attempts = 0;
+    code: |-
+      var numRedUnits = 0;
+      if(turnCounter % 10 >= 10 - get_item_count(11))
+        numRedUnits++;
+      
+      for(var i = 0; i < numRedUnits; i++)
+      {
+        attempts = 0;
+        redRow = scrIRandom(5);
+        while (scr02_GetUnit(LEFT_EDGE + 16, TOP_EDGE + (32 * redRow) + 16, o02___Unit) && attempts <= 5)
+            {
+                redRow += 1;
+                attempts += 1;
+  
+                if (redRow > 5)
+                    redRow = 0;
+            }
+  
+            if (attempts <= 5)
+            {
+                if (bagRandom)
+                {
+                    unitType = ds_list_find_value(unitPool[RED], bagIndex[RED]);
+                    bagIndex[RED]++;
+  
+                    if (bagIndex[RED] == ds_list_size(unitPool[RED]))
+                    {
+                        bagIndex[RED] = 0;
+                        scrShuffle(unitPool[RED]);
+                    }
+                }
+                else
+                {
+                    roll = scrIRandomRange(0, ds_list_size(unitPool[RED]) - 1);
+                    unitType = ds_list_find_value(unitPool[RED], roll);
+                }
+  
+                if (hasHero && heroCounter[RED] >= heroCost[RED])
+                {
+                    scrSfx(soundHeroAppears, 75);
+                    heroCounter[RED] -= heroCost[RED];
+                    unitType = RED_HERO;
+                    heroAnnouncementTimer = 160;
+                }
+  
+                if(has_item(unitType) || unitType == RED_GRUNTS)
+                  scr02_CreateUnit(unitType, LEFT_EDGE, TOP_EDGE + (32 * redRow));
+            }
+      }
 gml_Object_o02_Game_Other_14:
   - type: findprepend
     find: |-
